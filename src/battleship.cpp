@@ -9,20 +9,20 @@ using namespace std;
 class Gemi
 {
 public:
-    string isim;                     // Geminin adı
-    int boyut, vuruslar;             // Geminin boyutu ve aldığı vuruş sayısı
-    vector<pair<int, int>> konumlar; // Geminin bulunduğu konumlar
+    string isim;
+    int boyut, vuruslar;
+    vector<pair<int, int>> konumlar;
 
-    Gemi(string i, int b) : isim(i), boyut(b), vuruslar(0) {} // Gemi özellikleri başlatılır.
-    bool battiMi() { return vuruslar >= boyut; }              // Gemi tamamen battı mı?
+    Gemi(string i, int b) : isim(i), boyut(b), vuruslar(0) {}
+    bool battiMi() { return vuruslar >= boyut; }
 };
 
 // Harita sınıfı: Bu sınıf, oyun alanını ve gemilerin yerleşimini yönetir.
 class Harita
 {
 private:
-    vector<vector<char>> harita; // Oyun haritası ('~': boş, 'G': gemi, 'X': vurulan, 'O': ıskalanan)
-    vector<Gemi> gemiler;        // Haritadaki gemiler
+    vector<vector<char>> harita;
+    vector<Gemi> gemiler;
 
 public:
     Harita() { harita.resize(5, vector<char>(5, '~')); } // 5x5 boyutlu harita oluşturulur.
@@ -32,17 +32,17 @@ public:
     {
         while (true)
         {
-            int satir = rand() % 5, sutun = rand() % 5; // Rastgele bir başlangıç noktası seçilir.
-            bool yatay = rand() % 2;                    // Gemi yatay mı dikey mi yerleşecek?
+            int satir = rand() % 5, sutun = rand() % 5;
+            bool yatay = rand() % 2;
             if (yerlestirilebilirMi(gemi.boyut, satir, sutun, yatay))
             {
                 for (int i = 0; i < gemi.boyut; i++)
                 {
                     int s = satir + (yatay ? 0 : i), k = sutun + (yatay ? i : 0);
-                    harita[s][k] = 'G'; // Gemi konumlandırılır.
+                    harita[s][k] = 'G';
                     gemi.konumlar.push_back({s, k});
                 }
-                gemiler.push_back(gemi); // Gemi haritaya eklenir.
+                gemiler.push_back(gemi);
                 break;
             }
         }
@@ -63,17 +63,17 @@ public:
     // Belirtilen koordinata saldırır ve sonucu döndürür.
     bool saldir(int satir, int sutun)
     {
-        if (harita[satir][sutun] == 'G') // Eğer gemi vurulduysa
+        if (harita[satir][sutun] == 'G')
         {
-            harita[satir][sutun] = 'X'; // Vurulan nokta işaretlenir.
+            harita[satir][sutun] = 'X';
             for (auto &gemi : gemiler)
                 for (auto &konum : gemi.konumlar)
                     if (konum.first == satir && konum.second == sutun)
-                        if (++gemi.vuruslar == gemi.boyut) // Eğer gemi tamamen batmışsa
+                        if (++gemi.vuruslar == gemi.boyut)
                             cout << gemi.isim << " batti!\n";
             return true;
         }
-        harita[satir][sutun] = 'O'; // Eğer ıskalanmışsa
+        harita[satir][sutun] = 'O';
         return false;
     }
 
@@ -106,9 +106,9 @@ public:
 class Oyun
 {
 private:
-    Harita oyuncuHarita, bilgisayarHarita;   // Oyuncu ve bilgisayarın haritaları
-    set<pair<int, int>> bilgisayarHamleleri; // Bilgisayarın yaptığı hamleler
-    vector<pair<int, int>> hedefler;         // Bilgisayarın yeni hedefleri
+    Harita oyuncuHarita, bilgisayarHarita;
+    set<pair<int, int>> bilgisayarHamleleri;
+    vector<pair<int, int>> hedefler;
 
 public:
     // Oyunu başlatmadan önce gemileri yerleştirir.
@@ -128,9 +128,9 @@ public:
         while (true)
         {
             cout << "\nSenin Haritan:\n";
-            oyuncuHarita.goster(); // Oyuncunun haritası gösterilir.
+            oyuncuHarita.goster();
             cout << "\nDusman Haritasi:\n";
-            bilgisayarHarita.goster(false); // Düşmanın haritası gösterilir (gizli).
+            bilgisayarHarita.goster(false);
 
             // Oyuncunun saldırısı
             int satir, sutun;
@@ -138,16 +138,16 @@ public:
             {
                 cout << "Saldiri koordinatlarini gir (Orn: A2): ";
                 char sutunHarf;
-                cin >> sutunHarf >> satir; // Kullanıcıdan koordinat alınır.
+                cin >> sutunHarf >> satir;
                 sutun = sutunHarf - 'A';
-                if (sutun >= 0 && sutun < 5 && satir >= 0 && satir < 5) // Geçerli bir koordinat mı?
+                if (sutun >= 0 && sutun < 5 && satir >= 0 && satir < 5)
                     break;
                 cout << "Gecersiz giris Tekrar deneyin.\n";
             }
             if (bilgisayarHarita.saldir(satir, sutun))
-                cout << "Vuruldu!\n"; // Eğer gemi vurulduysa
+                cout << "Vuruldu!\n";
             else
-                cout << "Iska gecti!\n"; // Eğer ıskalandıysa
+                cout << "Iska gecti!\n";
 
             if (bilgisayarHarita.tumGemilerBattiMi())
             {
